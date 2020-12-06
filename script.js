@@ -2,21 +2,38 @@ console.log("FireStore !")
 const myList = document.querySelector('ul');
 const form = document.querySelector('form');
 
-
-add = course => {
-    myList.innerHTML += "<li class='list-group-item'> <h3> " +
-        course.title +
-        "</h3> <small>" + course.created_at.toDate() + "</small> </li>";
+// -------------------------------------- Fucntion :  ----------------------------------------------------------------------------
+run = () => {
+    db.collection("courses").get()
+        .then(res => res.docs.forEach(course => {
+            //console.log(course.id)
+            add(course.data(), course.id);
+        }))
+        .catch(err => console.log(err))
 }
+add = (course, id) => {
+        myList.innerHTML += "<li class='list-group-item' data-id='" + id + "'> <h3> " +
+            course.title +
+            "</h3> <small>" + course.created_at.toDate() + "</small> \
+                <button class='btn btn-danger btn-sm my-3'> Delete </button>             \
+         </li>";
+    }
+    // --------------------------------------------------------------------------------------------------------------------------
+
+run();
 
 
-db.collection("courses").get()
-    .then(res => res.docs.forEach(course => {
-        add(course.data());
-    }))
-    .catch(err => console.log(err))
 
+//-------------------------------------- Actions :  --------------------------------------------------------------------------------
+myList.addEventListener('click', e => {
+    if (e.target.tagName == "BUTTON") {
+        let id = e.target.parentElement.getAttribute('data-id')
 
+        db.collection('courses').doc(id).delete()
+            .then(() => console.log('Deleted'))
+            .catch(err => console.log(err))
+    }
+})
 form.addEventListener('submit', e => {
     e.preventDefault()
     const now = new Date();
