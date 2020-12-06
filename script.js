@@ -1,5 +1,7 @@
 console.log("FireStore !")
 const myList = document.querySelector('ul');
+const form = document.querySelector('form');
+
 
 add = course => {
     myList.innerHTML += "<li class='list-group-item'> <h3> " +
@@ -15,33 +17,15 @@ db.collection("courses").get()
     .catch(err => console.log(err))
 
 
-
-class Course {
-
-    constructor() {
-        this.html = document.createElement('li').classList.add('list-group-item')
-        this.title = '';
-        this.created_at = null;
+form.addEventListener('submit', e => {
+    e.preventDefault()
+    const now = new Date();
+    let course = {
+        title: document.querySelector('#course').value,
+        created_at: firebase.firestore.Timestamp.fromDate(now)
     }
+    db.collection("courses").add(course)
+        .then(res => console.log(res, "course added "))
+        .catch(err => console.error(err))
 
-    create() {
-        console.log(this.html.append(this.nodeTitle())
-            .append(this.setCreatedAt()));
-    }
-
-    nodeTitle() {
-        let el = document.createElement('h3');
-        el.innerText = this.title;
-        return el;
-    }
-
-    nodeCreatedAt() {
-        let el = document.createElement('small');
-        el.innerText = this.created_at;
-        return el;
-    }
-
-    setTitle(title) { this.title = title; }
-    setCreatedAt(create_at) { this.created_at = create_at; }
-
-}
+})
