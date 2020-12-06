@@ -4,21 +4,34 @@ const form = document.querySelector('form');
 
 // -------------------------------------- Fucntion :  ----------------------------------------------------------------------------
 run = () => {
-    db.collection("courses").get()
-        .then(res => res.docs.forEach(course => {
-            //console.log(course.id)
-            add(course.data(), course.id);
-        }))
-        .catch(err => console.log(err))
+    db.collection("courses").onSnapshot(sanp => {
+        //  console.log(sanp.docChanges());
+        sanp.docChanges().forEach(course => {
+            if (course.type === "added")
+                add(course.doc.data(), course.doc.id)
+            else {
+                del(course.doc.id)
+            }
+        })
+    })
+
 }
 add = (course, id) => {
-        myList.innerHTML += "<li class='list-group-item' data-id='" + id + "'> <h3> " +
-            course.title +
-            "</h3> <small>" + course.created_at.toDate() + "</small> \
+    myList.innerHTML += "<li class='list-group-item' data-id='" + id + "'> <h3> " +
+        course.title +
+        "</h3> <small>" + course.created_at.toDate() + "</small> \
                 <button class='btn btn-danger btn-sm my-3'> Delete </button>             \
          </li>";
-    }
-    // --------------------------------------------------------------------------------------------------------------------------
+}
+del = (id) => {
+    const courses = document.querySelectorAll('li');
+    courses.forEach(course => {
+        if (course.getAttribute('data-id') === id)
+            course.remove();
+    })
+}
+
+// --------------------------------------------------------------------------------------------------------------------------
 
 run();
 
