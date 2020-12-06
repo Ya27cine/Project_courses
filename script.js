@@ -26,8 +26,9 @@ add = (course, id) => {
 del = (id) => {
     const courses = document.querySelectorAll('li');
     courses.forEach(course => {
-        if (course.getAttribute('data-id') === id)
+        if (course.getAttribute('data-id') === id) {
             course.remove();
+        }
     })
 }
 
@@ -41,21 +42,23 @@ run();
 myList.addEventListener('click', e => {
     if (e.target.tagName == "BUTTON") {
         let id = e.target.parentElement.getAttribute('data-id')
-
-        db.collection('courses').doc(id).delete()
-            .then(() => console.log('Deleted'))
-            .catch(err => console.log(err))
+        if (confirm("Are you sure to delte this course ?")) {
+            db.collection('courses').doc(id).delete()
+                .then(() => console.log('Deleted'))
+                .catch(err => console.log(err))
+        }
     }
 })
 form.addEventListener('submit', e => {
     e.preventDefault()
+    let field = document.querySelector('#course').value;
     const now = new Date();
     let course = {
-        title: document.querySelector('#course').value,
+        title: field,
         created_at: firebase.firestore.Timestamp.fromDate(now)
     }
     db.collection("courses").add(course)
-        .then(res => console.log(res, "course added "))
+        .then(res => { console.log(res, "course added "), form.reset() })
         .catch(err => console.error(err))
 
 })
