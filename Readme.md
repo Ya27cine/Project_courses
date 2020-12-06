@@ -1,1 +1,1 @@
-# FireStore ( CRUD Courese )
+# FireStore ( CRUD Courses )
